@@ -1,0 +1,21 @@
+{
+  "version": "2",
+  "services": [
+    {
+      "name": "frontend",
+      "buildCommand": "npm install && npm run build",
+      "outputDirectory": "dist",
+      "installCommand": "npm install",
+      "startCommand": "npm run preview -- --port $PORT --host 0.0.0.0"
+    },
+    {
+      "name": "api",
+      "path": "api",
+      "buildCommand": "npm install",
+      "startCommand": "npm start",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
