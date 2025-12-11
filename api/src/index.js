@@ -24,7 +24,13 @@ pool.on('error', (err) => console.error('資料庫錯誤:', err));
 const departments = JSON.parse(process.env.DEPARTMENTS || '{"HR":{"name":"人資部","username":"hr","password":"hr123"}}');
 
 // 中介層
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['set-cookie']
+}));
 app.use(express.json());
 app.use(session({
   store: new PgSession({ pool, tableName: 'session' }),
