@@ -15,7 +15,7 @@ const PgSession = connectPgSimple(session);
 // 資料庫連線
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: false,
 });
 
 pool.on('error', (err) => console.error('資料庫錯誤:', err));
