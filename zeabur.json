@@ -3,11 +3,7 @@
   "services": [
     {
       "name": "timerecord",
-      "build": {
-        "type": "nodejs"
-      },
-      "buildCommand": "npm ci && npm run build && cd api && npm ci",
-      "startCommand": "cd api && npm start",
+      "dockerfile": "Dockerfile",
       "env": {
         "NODE_ENV": "production"
       }
