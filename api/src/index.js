@@ -12,21 +12,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const PgSession = connectPgSimple(session);
 
+// 信任代理（必須在所有中介層之前設置）
+app.set('trust proxy', 1);
+
 // 資料庫連線
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: false,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 pool.on('error', (err) => console.error('資料庫錯誤:', err));
 
 // 載入部門設定
 const departments = JSON.parse(process.env.DEPARTMENTS || '{"HR":{"name":"人資部","username":"hr","password":"hr123"}}');
-
-// 信任代理（Zeabur 環境需要）
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
 
 // 中介層
 app.use(cors({
