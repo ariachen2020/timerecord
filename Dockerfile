@@ -7,8 +7,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY api/package.json api/package-lock.json ./api/
 
-# 安装所有依赖（明确包含 devDependencies）
-RUN npm install
+# 强制安装所有依赖（包括 devDependencies）
+RUN npm install --production=false
 
 # 复制所有源代码
 COPY . .
