@@ -23,6 +23,11 @@ pool.on('error', (err) => console.error('資料庫錯誤:', err));
 // 載入部門設定
 const departments = JSON.parse(process.env.DEPARTMENTS || '{"HR":{"name":"人資部","username":"hr","password":"hr123"}}');
 
+// 信任代理（Zeabur 環境需要）
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // 中介層
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -32,11 +37,6 @@ app.use(cors({
   exposedHeaders: ['set-cookie']
 }));
 app.use(express.json());
-
-// 信任代理（Zeabur 環境需要）
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-}
 
 app.use(session({
   store: new PgSession({ pool, tableName: 'session' }),
