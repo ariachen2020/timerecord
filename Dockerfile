@@ -3,12 +3,15 @@ FROM node:22 AS builder
 
 WORKDIR /app
 
+# 在构建阶段不设置 NODE_ENV=production，以便安装 devDependencies
+ENV NODE_ENV=development
+
 # 复制根目录的 package files
 COPY package*.json ./
 COPY api/package*.json ./api/
 
 # 安装所有依赖（包括 devDependencies）
-RUN npm ci
+RUN npm ci || npm install
 
 # 复制所有源代码
 COPY . .
