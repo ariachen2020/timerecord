@@ -7,8 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY api/package*.json ./api/
 
-# 安装所有依赖（不设置 NODE_ENV，默认会安装所有依赖）
-RUN npm ci || npm install
+# 安装所有依赖（明确包含 devDependencies）
+RUN npm install
 
 # 复制所有源代码
 COPY . .
