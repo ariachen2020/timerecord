@@ -4,6 +4,7 @@ import connectPgSimple from 'connect-pg-simple';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pg from 'pg';
+import { initDatabase } from './init-db.js';
 
 dotenv.config();
 
@@ -430,8 +431,13 @@ app.get('/api/records/overview', auth, async (req, res) => {
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
 // 啟動伺服器
-app.listen(PORT, () => {
-  console.log(`
+async function startServer() {
+  try {
+    // 初始化資料庫
+    await initDatabase(pool);
+
+    app.listen(PORT, () => {
+      console.log(`
 ╔════════════════════════════════════════╗
 ║   補休登錄系統 - API 伺服器           ║
 ╚════════════════════════════════════════╝
@@ -450,4 +456,11 @@ app.listen(PORT, () => {
   - GET  /api/employees
   - DELETE /api/employees/:id
   `);
-});
+    });
+  } catch (error) {
+    console.error('❌ 伺服器啟動失敗:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
