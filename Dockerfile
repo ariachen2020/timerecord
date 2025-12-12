@@ -4,8 +4,8 @@ FROM node:22 AS builder
 WORKDIR /app
 
 # 复制根目录的 package files
-COPY package*.json ./
-COPY api/package*.json ./api/
+COPY package.json package-lock.json ./
+COPY api/package.json api/package-lock.json ./api/
 
 # 安装所有依赖（明确包含 devDependencies）
 RUN npm install
