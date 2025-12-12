@@ -3,7 +3,7 @@
   "services": [
     {
       "name": "timerecord",
-      "buildCommand": "npm install && npm run build && cd api && npm install",
+      "buildCommand": "npm ci && npm run build && cd api && npm ci",
       "startCommand": "cd api && npm start",
       "env": {
         "NODE_ENV": "production"
