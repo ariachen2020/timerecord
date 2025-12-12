@@ -24,7 +24,7 @@ app.set('trust proxy', 1);
 // 資料庫連線
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: false,  // Zeabur PostgreSQL 不支援 SSL
 });
 
 pool.on('error', (err) => console.error('資料庫錯誤:', err));
