@@ -21,12 +21,6 @@ const PgSession = connectPgSimple(session);
 // 信任代理（必須在所有中介層之前設置）
 app.set('trust proxy', 1);
 
-// 提供前端靜態文件（生產環境）
-if (process.env.NODE_ENV === 'production') {
-  const frontendPath = path.join(__dirname, '../../dist');
-  app.use(express.static(frontendPath));
-}
-
 // 資料庫連線
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -441,10 +435,14 @@ app.get('/api/records/overview', auth, async (req, res) => {
 // 健康檢查
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
-// SPA fallback - 必須放在所有 API 路由之後
+// 提供前端靜態文件（必須在所有 API 路由之後）
 if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../../dist');
+  app.use(express.static(frontendPath));
+
+  // SPA fallback - 處理客戶端路由
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../dist/index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
 
