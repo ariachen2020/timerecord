@@ -3,21 +3,18 @@ FROM node:22 AS builder
 
 WORKDIR /app
 
-# 在构建阶段不设置 NODE_ENV=production，以便安装 devDependencies
-ENV NODE_ENV=development
-
 # 复制根目录的 package files
 COPY package*.json ./
 COPY api/package*.json ./api/
 
-# 安装所有依赖（包括 devDependencies）
+# 安装所有依赖（不设置 NODE_ENV，默认会安装所有依赖）
 RUN npm ci || npm install
 
 # 复制所有源代码
 COPY . .
 
-# 构建前端
-RUN npm run build
+# 构建前端（设置 NODE_ENV=production 让 Vite 正确构建）
+RUN NODE_ENV=production npm run build
 
 # 安装后端依赖
 WORKDIR /app/api
