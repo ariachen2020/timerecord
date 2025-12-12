@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// 生產環境使用相對路徑（同域名），開發環境使用完整 URL
+const baseURL = import.meta.env.PROD
+  ? ''
+  : (import.meta.env.VITE_API_URL || 'http://localhost:3000');
+
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

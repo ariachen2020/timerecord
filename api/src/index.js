@@ -4,7 +4,12 @@ import connectPgSimple from 'connect-pg-simple';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pg from 'pg';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initDatabase } from './init-db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -15,6 +20,12 @@ const PgSession = connectPgSimple(session);
 
 // 信任代理（必須在所有中介層之前設置）
 app.set('trust proxy', 1);
+
+// 提供前端靜態文件（生產環境）
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../../dist');
+  app.use(express.static(frontendPath));
+}
 
 // 資料庫連線
 const pool = new Pool({
@@ -429,6 +440,13 @@ app.get('/api/records/overview', auth, async (req, res) => {
 
 // 健康檢查
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
+
+// SPA fallback - 必須放在所有 API 路由之後
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../dist/index.html'));
+  });
+}
 
 // 啟動伺服器
 async function startServer() {
