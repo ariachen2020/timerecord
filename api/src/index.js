@@ -107,7 +107,7 @@ const auth = (req, res, next) => {
 app.post('/api/records', auth, async (req, res) => {
   const client = await pool.connect();
   try {
-    const { employeeId, operationType, hours, minutes, effectiveDate, reason } = req.body;
+    const { employeeId, operationType, hours, minutes, effectiveDate, reason, photoUrl } = req.body;
     const { departmentCode, username } = req.user;
 
     if (!employeeId || !operationType || !effectiveDate) {
@@ -169,9 +169,9 @@ app.post('/api/records', auth, async (req, res) => {
     // 插入記錄
     const expiry = operationType === '增加' ? calcExpiryDate(effectiveDate) : null;
     const result = await client.query(
-      `INSERT INTO records (department_code, employee_id, operation_type, hours, minutes, effective_date, expiry_date, reason, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      [departmentCode, employeeId, operationType, hours, minutes, effectiveDate, expiry, reason || '', username]
+      `INSERT INTO records (department_code, employee_id, operation_type, hours, minutes, effective_date, expiry_date, reason, photo_url, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+      [departmentCode, employeeId, operationType, hours, minutes, effectiveDate, expiry, reason || '', photoUrl || null, username]
     );
 
     // FIFO 扣除

@@ -8,6 +8,7 @@ export default function QueryEmployee() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const handleQuery = async (e) => {
     e.preventDefault();
@@ -141,6 +142,9 @@ export default function QueryEmployee() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       原因
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      照片
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -179,6 +183,18 @@ export default function QueryEmployee() {
                       <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                         {record.reason || '-'}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {record.photo_url ? (
+                          <button
+                            onClick={() => setSelectedPhoto(record.photo_url)}
+                            className="text-blue-600 hover:text-blue-800 underline text-sm"
+                          >
+                            查看照片
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-sm">-</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -186,6 +202,29 @@ export default function QueryEmployee() {
             </div>
           </div>
         </>
+      )}
+
+      {/* 照片預覽對話框 */}
+      {selectedPhoto && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <button
+              onClick={() => setSelectedPhoto(null)}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl font-bold"
+            >
+              ✕ 關閉
+            </button>
+            <img
+              src={selectedPhoto}
+              alt="補休記錄照片"
+              className="max-w-full max-h-[90vh] rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

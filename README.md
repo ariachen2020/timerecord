@@ -11,6 +11,7 @@
 - ✅ 負數餘額控管
 - ✅ 響應式設計（支援手機/平板）
 - ✅ Excel 匯出功能
+- ✅ 資料庫自動備份機制
 
 ## 技術棧
 
@@ -175,6 +176,89 @@ psql $DATABASE_URL < database/schema.sql
 - 一個員工號碼只能屬於一個部門
 - 新增記錄時自動檢查跨部門衝突
 
+## 資料庫備份與還原
+
+系統提供完整的資料庫備份機制，保護重要的補休記錄資料。
+
+### 快速開始
+
+#### 本地開發環境
+
+**1. 手動執行備份**
+\`\`\`bash
+cd scripts/backup
+./backup.sh
+\`\`\`
+
+**2. 設定自動備份**
+\`\`\`bash
+cd scripts/backup
+./setup-cron.sh
+\`\`\`
+
+#### Zeabur 部署環境
+
+**1. 設定環境變數**
+\`\`\`bash
+cd scripts/backup
+cp zeabur.env.example zeabur.env
+# 編輯 zeabur.env，從 Zeabur 控制台複製 DATABASE_URL
+\`\`\`
+
+**2. 執行備份**
+\`\`\`bash
+./zeabur-backup-auto.sh
+\`\`\`
+
+**3. 設定定期自動備份（在本地電腦）**
+\`\`\`bash
+# 編輯 crontab
+crontab -e
+
+# 新增每日凌晨 2:00 自動備份
+0 2 * * * cd /path/to/timerecord/scripts/backup && ./zeabur-backup-auto.sh
+\`\`\`
+
+#### 還原資料庫
+\`\`\`bash
+cd scripts/backup
+./restore.sh ../../backups/timerecord_backup_20231226_120000.sql.gz
+\`\`\`
+
+### 備份功能特色
+- 自動使用 pg_dump 完整備份資料庫
+- 自動壓縮備份檔案（gzip）節省空間
+- 自動清理過期備份檔案
+- 支援自訂保留天數
+- 雙重確認機制防止誤操作還原
+- 詳細的日誌記錄
+
+### 管理指令
+\`\`\`bash
+# 查看備份排程
+crontab -l
+
+# 列出所有備份
+ls -lh backups/
+
+# 查看備份日誌
+tail -f backups/backup.log
+\`\`\`
+
+### 詳細說明
+請參閱 [scripts/backup/README.md](scripts/backup/README.md) 以了解：
+- 完整的備份與還原流程
+- Cron 排程設定說明
+- 疑難排解
+- 進階功能（雲端備份、通知等）
+
+### 生產環境建議
+- 設定每日自動備份
+- 保留至少 30 天的備份
+- 定期測試還原流程
+- 考慮將備份上傳到雲端儲存（AWS S3、Google Cloud Storage）
+- 設定備份失敗告警通知
+
 ## 專案結構
 
 \`\`\`
@@ -186,6 +270,12 @@ timerecord/
 │   └── .env.example
 ├── database/              # 資料庫
 │   └── schema.sql         # 資料庫結構
+├── scripts/               # 管理腳本
+│   └── backup/           # 備份相關腳本
+│       ├── backup.sh     # 備份腳本
+│       ├── restore.sh    # 還原腳本
+│       ├── setup-cron.sh # 自動排程設定
+│       └── README.md     # 備份說明文件
 ├── src/                   # 前端原始碼
 │   ├── api/              # API 客戶端
 │   ├── components/       # React 組件
@@ -194,6 +284,7 @@ timerecord/
 │   ├── utils/            # 工具函數
 │   ├── App.jsx           # 主應用
 │   └── main.jsx          # 入口點
+├── backups/               # 備份檔案儲存目錄
 ├── package.json          # 前端依賴
 └── README.md             # 本文件
 \`\`\`

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS records (
   effective_date DATE NOT NULL,
   expiry_date DATE,
   reason TEXT,
+  photo_url TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   created_by VARCHAR(50),
   FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE CASCADE,
@@ -62,3 +63,4 @@ COMMENT ON TABLE records IS '補休記錄表，記錄所有增加/減少時數�
 COMMENT ON TABLE deduction_mappings IS 'FIFO 扣除對應表，追蹤每次減少時數的來源';
 COMMENT ON COLUMN records.expiry_date IS '到期日期 = effective_date + 365天，僅對增加記錄有效';
 COMMENT ON COLUMN records.operation_type IS '操作類型：增加 或 減少';
+COMMENT ON COLUMN records.photo_url IS '照片 Base64 編碼或檔案 URL';
