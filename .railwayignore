@@ -1,0 +1,6 @@
+node_modules
+backups
+dist
+.env
+api/.env
+!database/schema.sql
